@@ -28,17 +28,21 @@ public class ScanSystem {
         createScanRequest("P002", "Head CT",  "2024-06-02");
         createScanRequest("P003", "Abdomen CT", "2024-06-03");
 
+
+        
+
+
         //some methods being implemented
         //Getting all scans
-        System.out.println("=== All Scan Requests ===");
+        System.out.println("All Scan Requests:");
         getAllScans();
 
         //Getting a particular scan by an ID
-        System.out.println("\n=== Get Scan by ID: 2 ===");
+        System.out.println("\nGet Scan by ID: 2:");
         getScanById(2);
 
         //Updating a particular scan
-        System.out.println("\n=== Updating Scan ID 1 to COMPLETED ===");
+        System.out.println("\nUpdating Scan ID 1 to COMPLETED:");
         updateScanStatus(1, "COMPLETED");
         getScanById(1);
     }
