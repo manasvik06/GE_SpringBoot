@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * This is the Controller - the ENTRY POINT of our microservice.
@@ -68,7 +69,6 @@ public class ScanController {
     try {
       // Validate required fields before doing anything, these are my own validation checks I have
       // created, of course in an actual application this could be very different
-      // In a medical system we cannot create a scan with no patient ID, 400 exit code
       if (request.getPatientId() == null || request.getPatientId().isEmpty()) {
         return ResponseEntity.badRequest().build(); // 400
       }
@@ -134,11 +134,16 @@ public class ScanController {
   @GetMapping("/{id}")
   public ResponseEntity<ScanRequest> getScanById(@PathVariable Long id) {
     try {
-      return scanService.getScanById(id)
-              .map(ResponseEntity::ok)                    // found → 200 OK
-              .orElse(ResponseEntity.notFound().build()); // not found → 404
+      Optional<ScanRequest> result = scanService.getScanById(id);
+
+      if (result.isPresent()) {
+        return ResponseEntity.ok(result.get()); // 200 OK with body
+      } else {
+        return ResponseEntity.notFound().build(); // 404
+      }
+
     } catch (Exception e) {
-      return ResponseEntity.status(500).build(); // 500
+      return ResponseEntity.status(500).build(); // something went wrong on our end : server error
     }
   }
 
@@ -165,18 +170,19 @@ public class ScanController {
     try {
       // Validate that the status is one of our three allowed values
       // We don't want someone setting a scan status to an invalid value!
-      // This is input validation - critical in any production system
       if (!newStatus.equals("PENDING") &&
               !newStatus.equals("COMPLETED") &&
               !newStatus.equals("CANCELLED")) {
         return ResponseEntity.badRequest().build(); // 400
       }
 
-      // We use PUT because we are UPDATING an existing resource
-      // Using the right HTTP method is part of good REST API design!
-      return scanService.updateScanStatus(id, newStatus)
-              .map(ResponseEntity::ok)                    // found → 200 OK
-              .orElse(ResponseEntity.notFound().build()); // not found → 404
+      Optional<ScanRequest> result = scanService.updateScanStatus(id, newStatus);
+
+      if (result.isPresent()) {
+        return ResponseEntity.ok(result.get());
+      } else {
+        return ResponseEntity.notFound().build();
+      }
 
     } catch (Exception e) {
       // Something unexpected went wrong on our end
