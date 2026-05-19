@@ -115,11 +115,4 @@ public class ScanService {
     // Remove the scan from our list where the ID matches
     scanRequests.removeIf(scan -> scan.getId().equals(id));
   }
-
-
-  public void main(){
-    ScanRequest scan = new ScanRequest();
-    scan.setPatientId("P101");
-    scan.setScanType("CT");
-    scan.setStatus("PENDING");
-  }}
+}

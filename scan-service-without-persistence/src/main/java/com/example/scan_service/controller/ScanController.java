@@ -181,7 +181,7 @@ public class ScanController {
       if (result.isPresent()) {
         return ResponseEntity.ok(result.get());
       } else {
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.notFound().build(); //404
       }
 
     } catch (Exception e) {
